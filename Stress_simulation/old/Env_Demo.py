@@ -12,6 +12,7 @@ class Agent(): # エージェントを定義
 
 
 def main(): # 環境内でエージェントを動作させるコードを実装
+    N = int(input("試行回数 N = "))
     # Make grid environment.
     grid = [
         [1],
@@ -29,7 +30,7 @@ def main(): # 環境内でエージェントを動作させるコードを実装
     agent = Agent(env)
 
     # Try 10 game.
-    for i in range(10):
+    for i in range(N):
         # Initialize position of agent.
         state = env.reset()
         total_reward = 0
@@ -41,7 +42,7 @@ def main(): # 環境内でエージェントを動作させるコードを実装
             total_reward += reward
             state = next_state
 
-        print("Episode {}: Agent gets {} reward.".format(i, total_reward))
+        print("\nEpisode {}: Agent gets {} reward.\n".format(i, total_reward))
 
 
 if __name__ == "__main__":

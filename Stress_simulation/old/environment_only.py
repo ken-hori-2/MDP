@@ -46,7 +46,7 @@ class Environment():
 
         # Default reward is minus. Just like a poison swamp.
         # It means the agent has to reach the goal fast!
-        self.default_reward = -0.1 # -0.04
+        self.default_reward = 0 #-0.1 # -0.04
 
         # Agent can move to a selected direction in move_prob.
         # It means the agent will move different direction
@@ -85,7 +85,8 @@ class Environment():
 
         opposite_direction = Action(action.value * -1)
 
-        for a in self.actions:
+        for a in self.actions:                          # 行動の種類の数だけ回す 1回目:UP, 2回目:DOWN
+            # prob = 1.0 # 確実に遷移
             prob = 0
             if a == action:
                 prob = self.move_prob
@@ -93,20 +94,27 @@ class Environment():
                 prob = (1 - self.move_prob) / 2
 
             next_state = self._move(state, a)
-            if next_state not in transition_probs:
+            # print(a, self.actions)
+            print("next state 0 :{}".format(next_state))
+            # print(f"trans_probs 0 :{transition_probs}")
+            if next_state not in transition_probs:      # next_stateを初めて入れる時(UPの確率を代入)
                 transition_probs[next_state] = prob
-            else:
+            else:                                       # next_stateを追加する時(DOWNの確率を代入)
                 transition_probs[next_state] += prob
+
+            
+            # print(f"trans_probs 1 :{transition_probs}")
+            # print("next state 1 :{}\n".format(next_state))
 
         return transition_probs
 
-    def can_action_at(self, state): # 行動できる場所(状態)かどうかを判定する関数を定義
+    def can_action_at(self, state):                     # 行動できる場所(状態)かどうかを判定する関数を定義
         if self.grid[state.row][state.column] == 0:
             return True
         else:
             return False
 
-    def _move(self, state, action): # ある状態である行動をすると、次にどの状態になるかを返す関数を定義
+    def _move(self, state, action):                     # ある状態である行動をすると、次にどの状態になるかを返す関数を定義
         if not self.can_action_at(state):
             raise Exception("Can't move from here!")
 
@@ -134,7 +142,7 @@ class Environment():
 
         return next_state
 
-    def reward_func(self, state): # 報酬関数を定義
+    def reward_func(self, state):                       # 報酬関数を定義
         reward = self.default_reward
         done = False
 
@@ -151,21 +159,29 @@ class Environment():
 
         return reward, done
 
-    def reset(self): # エージェントの位置を初期化する関数を定義
+    def reset(self):                                    # エージェントの位置を初期化する関数を定義
         # Locate the agent at lower left corner.
         # self.agent_state = State(self.row_length - 1, 0)
         self.agent_state = State(self.row_length - 2, 0)
         return self.agent_state
 
-    def step(self, action): # 行動を行う関数を定義
+    
+    
+    
+    
+    
+    # 主に使っている部分
+    
+    def step(self, action):                             # 行動を行う関数を定義
         next_state, reward, done = self.transit(self.agent_state, action)
         if next_state is not None:
             self.agent_state = next_state
 
         return next_state, reward, done
 
-    def transit(self, state, action): # 遷移関数を定義
+    def transit(self, state, action):                   # 遷移関数を定義
         transition_probs = self.transit_func(state, action)
+        # ↑ 遷移確率 prob = 1.0 , 逆方向:0.0
         print("trans:{}".format(transition_probs))
 
         if len(transition_probs) == 0:
@@ -177,7 +193,9 @@ class Environment():
             next_states.append(s)
             probs.append(transition_probs[s])
 
+        # print("next states:{}\n".format(next_states))
         next_state = np.random.choice(next_states, p=probs)
+        print("next state:{}".format(next_state))
         reward, done = self.reward_func(next_state)
-        print("reward {} {}".format(reward, done))
+        print("reward {} {}\n".format(reward, done))
         return next_state, reward, done
