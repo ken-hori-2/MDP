@@ -14,7 +14,8 @@ class State():
 
     def __repr__(self):
         # return "<State: [{}, {}]>".format(self.row, self.column)
-        return "《State: [{}, {}]》".format(self.row, self.column)
+        # return "《State: [{}, {}]》".format(self.row, self.column)
+        return "[{}]".format(self.row)
 
     def clone(self):
         return State(self.row, self.column)
@@ -89,17 +90,13 @@ class Environment():
                 prob = 0.0 # 今は行かない方向に行く可能性はない
 
             next_state = self._move(state, a)
-            # print(a, self.actions)
-            # print("next state 0 :{}".format(next_state))
-            # print(f"trans_probs 0 :{transition_probs}")
+            
             if next_state not in transition_probs:      # next_stateを初めて入れる時(UPの確率を代入)
                 transition_probs[next_state] = prob
             else:                                       # next_stateを追加する時(DOWNの確率を代入)
                 transition_probs[next_state] += prob
 
-            # print(f"trans_probs 1 :{transition_probs}")
-            # print("next state 1 :{}\n".format(next_state))
-
+            
         return transition_probs
 
     def can_action_at(self, state):                     # 行動できる場所(状態)かどうかを判定する関数を定義
@@ -112,8 +109,6 @@ class Environment():
         if not self.can_action_at(state):
             raise Exception("Can't move from here!")
 
-        # if self.reward >= 0.2:
-        #     raise Exception("Can't move from here!")
 
         next_state = state.clone()
 

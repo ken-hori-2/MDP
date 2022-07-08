@@ -1,7 +1,9 @@
 import random
 
 # from numpy import full
-from env_next_planning import Environment
+import sys
+sys.path.append("../")
+from env_anim import Environment
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,10 +25,10 @@ class Agent():                              # エージェントを定義
         return (self.actions[1])            # DOWN
 
     def policy_retry(self, state):
-        return (self.actions[2])
+        return (self.actions[2])            # RECONFILM
 
     def policy_branch(self, state):
-        return (self.actions[3])
+        return (self.actions[3])            # BRANCH
     
     def neuron(self, total_stress, threshold):# w1 = 1, b = x1*w1
 
@@ -69,40 +71,46 @@ def main():                                 # 環境内でエージェントを�
     for i in range(N):
         # Initialize position of agent.
         state = env.reset()
-        total_reward = 0.0
+        total_reward = 0
         done = False
-        count = 1 # 0
+        count = 0
         TRIGAR = False
         trigar_count = 0
         FIRST = True
         STRESSFREE = 0.0001
         STRESSFULL = 0.3
-        IGNITION_LIST = np.zeros(shape=10) # env.row_length)
+        IGNITION_LIST = np.zeros(shape=20) # env.row_length)
         TOTALREWARD_LIST = np.zeros(shape=101)
         RESULT = False
-        STATE_HISTORY = []
-        anim_list = []
-
-        STATE_HISTORY.append(state)
-        TOTALREWARD_LIST[0] = total_reward
+        
         while not done:
             threshold = STRESSFULL
 
-            if total_reward <= STRESSFREE or total_reward >= threshold:
+            if total_reward < STRESSFREE or total_reward >= threshold:
             
-                if total_reward <= STRESSFREE and not FIRST:
+                if total_reward < STRESSFREE and not FIRST:
                     trigar_count += 1
+
+                    if trigar_count >= 2: # 一回だけ確認 二回目の確認はせずに終了
+                        break
                     # action = agent.next_planning(state, trigar_count)
-                    action = agent.policy_branch(state)
+                    print("#################################\nRECONFILM from here !\n#################################")
+                    action = agent.policy_retry(state)
                     print(action)
+                    
+                    TRIGAR = False # add
                     next_state, reward, done = env.step(action, TRIGAR)
                     total_reward += reward
                     state = next_state
-                    STATE_HISTORY.append(state)
+                    IGNITION_LIST[trigar_count] = threshold # add
                     TOTALREWARD_LIST[count] = total_reward
-                    # break
-                    # done = True
-                    continue
+                    # add
+                    # TRIGAR = agent.neuron(total_reward, threshold)
+                    
+                    if trigar_count < 2:
+                        continue
+                    # else:
+                    #     break
                 
                 # threshold = agent.next_planning(STRESSFULL, trigar_count)
 
@@ -120,7 +128,6 @@ def main():                                 # 環境内でエージェントを�
                 next_state, reward, done = env.step(action, TRIGAR)
                 total_reward += reward
                 state = next_state
-                STATE_HISTORY.append(state)
                 
                 print("Step {}: Agent gets total {:.2f} stress.\n".format(count, total_reward))
             else:
@@ -129,7 +136,6 @@ def main():                                 # 環境内でエージェントを�
                 next_state, reward, done = env.step(action, TRIGAR)
                 total_reward += reward
                 state = next_state
-                STATE_HISTORY.append(state)
 
                 print("Step {}: Agent gets total {:.2f} stress.\n".format(count, total_reward))
 
@@ -139,7 +145,6 @@ def main():                                 # 環境内でエージェントを�
                 break
 
         print("\nEpisode {}: Agent gets {:.2f} stress.\n".format(i, total_reward))
-        print("state_history : {}".format(STATE_HISTORY))
 
     
     # 結果をグラフ化

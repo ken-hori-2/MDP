@@ -5,7 +5,7 @@ from env import Environment
 
 import matplotlib.pyplot as plt
 import numpy as np
-from graph import Illustration
+from graph_mdp import Illustration
 
 
 class Agent():                              # エージェントを定義

@@ -1,11 +1,17 @@
 import random
 
-from numpy import full
-from env import Environment
+# from numpy import full
+import sys
+sys.path.append("../")
+from env_anim import Environment
 
 import matplotlib.pyplot as plt
 import numpy as np
 from graph import Illustration
+from anim_class_plt_ver import Anim
+
+
+# mdp_next_planning_branch.py のアニメーションver, State《 [{}] 》 -> State[{}] (シンプル化)
 
 
 class Agent():                              # エージェントを定義
@@ -21,11 +27,16 @@ class Agent():                              # エージェントを定義
     
     def policy_stressfull(self, state):
         return (self.actions[1])            # DOWN
+
+    def policy_retry(self, state):
+        return (self.actions[2])
+
+    def policy_branch(self, state):
+        return (self.actions[3])
     
     def neuron(self, total_stress, threshold):# w1 = 1, b = x1*w1
 
         if threshold > total_stress: # b:
-            print("thre:{}  total_stress:{}".format(threshold, total_stress))
             print("#################################\nStressFree ! UP from here !\n#################################")
             return False
         else:
@@ -33,20 +44,8 @@ class Agent():                              # エージェントを定義
             return True
         # return True * (threshold <= total_stress)
 
-    def next_planning(self, STRESSFULL, trigar_count):
-        return (STRESSFULL + (0.1*trigar_count))
-
-    def all_green(self, total_reward, STRESSFREE, threshold):
-        if total_reward < STRESSFREE or total_reward >= threshold:
-            # print("########################################################  {} total:{}".format(FIRST, total_reward))
-            # if total_reward < STRESSFREE and FIRST==False:
-            #         trigar_count += 1
-                    # print("########################################################")
-            # FIRST = False
-
-            return True# , trigar_count, FIRST
-        else:
-            return False#, trigar_count, FIRST
+    # def next_planning(self, state, trigar_count):
+    #     return Agent.policy_branch(state)
         
 
 
@@ -76,38 +75,46 @@ def main():                                 # 環境内でエージェントを�
     for i in range(N):
         # Initialize position of agent.
         state = env.reset()
-        total_reward = 0
+        total_reward = 0.0
         done = False
-        count = 0
+        count = 1 # 0
         TRIGAR = False
         trigar_count = 0
         FIRST = True
-        STRESSFREE = 0.01#0.0001
+        STRESSFREE = 0.0001
         STRESSFULL = 0.3
         IGNITION_LIST = np.zeros(shape=10) # env.row_length)
         TOTALREWARD_LIST = np.zeros(shape=101)
         RESULT = False
-        # print("RESULT:{}".format(RESULT))
-        # continue_move_complete = False
+        STATE_HISTORY = []
+        anim_list = []
 
+        STATE_HISTORY.append(state)
+        TOTALREWARD_LIST[0] = total_reward
         while not done:
-            continue_move_complete = False
-
             threshold = STRESSFULL
-            # continue_move_complete, trigar_count, FIRST = agent.all_green(round(total_reward, 2), STRESSFREE, threshold, trigar_count, FIRST)
-            continue_move_complete = agent.all_green(round(total_reward, 2), STRESSFREE, threshold)
 
-            if continue_move_complete:
-                
-                if total_reward < STRESSFREE and FIRST==False:
+            if total_reward <= STRESSFREE or total_reward >= threshold: # 0に戻った後、発火時にTrue
+            
+                if total_reward <= STRESSFREE and not FIRST:            # 0に戻った後　かつ　初め以外 -> 発火して戻ってきた時
                     trigar_count += 1
-                threshold = (STRESSFULL + (0.1*trigar_count)) # agent.next_planning(STRESSFULL, trigar_count)
+                    # action = agent.next_planning(state, trigar_count)
+                    action = agent.policy_branch(state)
+                    print(action)
+                    next_state, reward, done = env.step(action, TRIGAR)
+                    total_reward += reward
+                    state = next_state
+                    STATE_HISTORY.append(state)
+                    TOTALREWARD_LIST[count] = total_reward
+                    continue
+                
+                # threshold = agent.next_planning(STRESSFULL, trigar_count)
 
                 TRIGAR = agent.neuron(total_reward, threshold)
                 print(f"####TRIGAR:{TRIGAR}####")
-                print("trigar_count:{}".format(trigar_count))
-                IGNITION_LIST[trigar_count] = threshold
+
                 FIRST = False
+                IGNITION_LIST[trigar_count] = threshold
             print(f"threshold:{IGNITION_LIST}")
             
             if TRIGAR:
@@ -117,6 +124,7 @@ def main():                                 # 環境内でエージェントを�
                 next_state, reward, done = env.step(action, TRIGAR)
                 total_reward += reward
                 state = next_state
+                STATE_HISTORY.append(state)
                 
                 print("Step {}: Agent gets total {:.2f} stress.\n".format(count, total_reward))
             else:
@@ -125,6 +133,7 @@ def main():                                 # 環境内でエージェントを�
                 next_state, reward, done = env.step(action, TRIGAR)
                 total_reward += reward
                 state = next_state
+                STATE_HISTORY.append(state)
 
                 print("Step {}: Agent gets total {:.2f} stress.\n".format(count, total_reward))
 
@@ -134,6 +143,8 @@ def main():                                 # 環境内でエージェントを�
                 break
 
         print("\nEpisode {}: Agent gets {:.2f} stress.\n".format(i, total_reward))
+        print("state_history : {}".format(STATE_HISTORY))
+        print("state_history[0] : {}".format(STATE_HISTORY[0]))
 
     
     # 結果をグラフ化
@@ -142,6 +153,28 @@ def main():                                 # 環境内でエージェントを�
     if RESULT:
         print("結果を描写")
         # plt.show()
+
+    # アニメーション
+    
+    # ANIM_RESULT = Anim(STATE_HISTORY)
+
+    # if ANIM_RESULT:
+    #     print("アニメーション終了")
+
+    # for i in range(len(STATE_HISTORY)):
+    #     if STATE_HISTORY[i] == [11]:
+    #         anim_list.append(0)
+    #     elif STATE_HISTORY[i] == [12]:
+    #         anim_list.append(-1)
+    #     elif STATE_HISTORY[i] == [10]:
+    #         anim_list.append(1)
+    #     elif STATE_HISTORY[i] == [9]:
+    #         anim_list.append(2)
+    #     elif STATE_HISTORY[i] == [8]:
+    #         anim_list.append(1)
+    #     # anim_list.append(STATE_HISTORY[i])
+    #     print(anim_list)
+
 
 
 if __name__ == "__main__":
