@@ -1,6 +1,4 @@
 import random
-
-# from numpy import full
 import sys
 sys.path.append("../")
 from env_anim import Environment
@@ -8,12 +6,14 @@ from env_anim import Environment
 import matplotlib.pyplot as plt
 import numpy as np
 from graph import Illustration
-from anim_class_plt_ver import Anim
+# from anim_class_plt_ver import Anim
 
 
 # mdp_next_planning_branch.py のアニメーションver, State《 [{}] 》 -> State[{}] (シンプル化)
 
 # mdp_branch_anim.py の整理 ver.
+
+# mdp_re.py の整理ver.
 
 
 class Agent():                              # エージェントを定義
@@ -32,7 +32,6 @@ class Agent():                              # エージェントを定義
 
     # def policy_retry(self, state):
     #     return (self.actions[2])
-
     # def policy_branch(self, state):
     #     return (self.actions[3])
     
@@ -46,8 +45,12 @@ class Agent():                              # エージェントを定義
             return True
         # return True * (THRESHOLD <= total_stress)
 
-    # def next_planning(self, state, TRIGAR_COUNT):
-    #     return Agent.policy_branch(state)
+    def next_planning(self, N, TRIGAR_COUNT):
+        if N * TRIGAR_COUNT >= 1.0: # 納得度が1.0になるまでリトライ
+            return True
+        else:
+            print("\n#################################\nDown S0 ! RECONFILM from here !\n#################################")
+            return False
 
     # def culculate(self, action, env, TRIGAR, TOTAL_STRESS, state):
     #     print(action)
@@ -57,7 +60,7 @@ class Agent():                              # エージェントを定義
 
 
 def main():                                 # 環境内でエージェントを動作させるコードを実装
-    N = int(input("試行回数 N = "))
+    epoch = int(input("試行回数 N = "))
     # Make grid environment.
     grid = [
         [0],
@@ -71,7 +74,7 @@ def main():                                 # 環境内でエージェントを�
     agent = Agent(env)
 
     # Try 10 game.
-    for i in range(N):
+    for i in range(epoch):
         # Initialize position of agent.
         state = env.reset()
         
@@ -88,7 +91,7 @@ def main():                                 # 環境内でエージェントを�
 
         # やり直す回数? 納得度の分散度合い
         # 決断の納得しやすさ
-        N = 0.25 # 1 #3
+        N = 0.25 # 1
 
         # 過程の保存の為の配列
         IGNITION_LIST = np.zeros(shape=10) # env.row_length)
@@ -107,28 +110,11 @@ def main():                                 # 環境内でエージェントを�
                     
                     TRIGAR_COUNT += 1
 
-                    # # Nの決定
-                    # # N -= TRIGAR_COUNT * 0.5
-                    # N = 0.25 * TRIGAR_COUNT
-                    # # if TRIGAR_COUNT >= N:
-                    # #     break
-                    # if N >= 1.0: # if N <= 0: # Nがある程度まで収束したら(小さくなったら)終了 -> branchとか
-                    #     break # or branch
-                    # # N -= 0.5
-                    if N * TRIGAR_COUNT >= 1.0: # 納得度が1.0になるまでリトライ
-                        break
-
-                    # print("\n#################################\nDown S0 ! RECONFILM from here !\n#################################")
-                    # # action = agent.next_planning(state, TRIGAR_COUNT)
-                    # action = agent.policy_retry(state)
-                    # print(action)
-                    # print("STEP {} : Agent gets total {:.2f} stress.\n".format(COUNT, TOTAL_STRESS))
-                    # next_state, stress, DONE = env.step(action, TRIGAR)
-                    # TOTAL_STRESS += stress
-                    # state = next_state
-                    # STATE_HISTORY.append(state)
-                    # TOTALREWARD_LIST[COUNT] = TOTAL_STRESS
-                    # print("TS:{}".format(TOTAL_STRESS))
+                    # 納得度の決定
+                    # Nがある程度まで収束したら(小さくなったら)終了 -> branchとか
+                    RE = agent.next_planning(N, TRIGAR_COUNT)
+                    if RE:
+                        break # or branch
                 
                 # THRESHOLD = agent.next_planning(STRESSFULL, TRIGAR_COUNT)
 
@@ -140,7 +126,6 @@ def main():                                 # 環境内でエージェントを�
             # print(f"THRESHOLD:{IGNITION_LIST}")
             
             if TRIGAR:
-               # next_plan = agent.next_planning(state, TRIGAR_COUNT)
                 action = agent.policy_stressfull(state)
             else:
                 action = agent.policy_stressfree(state)
@@ -166,12 +151,9 @@ def main():                                 # 環境内でエージェントを�
     
     if RESULT:
         print("結果を描写")
-        # plt.show()
 
     # アニメーション
-    
     # ANIM_RESULT = Anim(STATE_HISTORY)
-
     # if ANIM_RESULT:
     #     print("アニメーション終了")
 
