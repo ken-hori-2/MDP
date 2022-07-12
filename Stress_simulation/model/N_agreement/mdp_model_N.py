@@ -1,13 +1,15 @@
 import random
 import sys
+# sys.path.append("../")
 from env_anim_N import Environment
+
 import matplotlib.pyplot as plt
 import numpy as np
 sys.path.append("../")
-# from graph_model import Illustration
+from graph_model import Illustration
 # from anim_class_plt_ver import Anim
 from statistics import mean, median,variance,stdev
-from algorism_Fix import model
+from algorithm_N import model
 
 
 # mdp_next_planning_branch.py のアニメーションver, State《 [{}] 》 -> State[{}] (シンプル化)
@@ -20,8 +22,6 @@ from algorism_Fix import model
 
 # mdp_model.py の納得度Nの分散を計算させるver.
 
-# mdp_model_N.py のclassの2回呼び出しの修正ver.
-
 
 class Agent():                              # エージェントを定義
 
@@ -33,6 +33,11 @@ class Agent():                              # エージェントを定義
     
     def policy_stressfull(self, state):
         return (self.actions[1])            # DOWN
+
+    # def policy_retry(self, state):
+    #     return (self.actions[2])
+    # def policy_branch(self, state):
+    #     return (self.actions[3])
     
     def neuron(self, total_stress, THRESHOLD):# w1 = 1, b = x1*w1
 
@@ -44,11 +49,21 @@ class Agent():                              # エージェントを定義
             return True
 
     def next_planning(self, N, TRIGAR_COUNT, agent, data):
-        N = agent.culculate(data, TRIGAR_COUNT)
+        # N = agent.culculate(0.3, TRIGAR_COUNT)
+        # data = 0.3
+        mu = mean(data)
+        if TRIGAR_COUNT <= 1:
+            std = 0.0
+        else:
+            std = stdev(data)
+        print("\ndata:{}".format(data))
+        print(" mu:{}".format(mu))
+        print(" std:{:.2f}".format(std))
+        N = (1.0 - std) * TRIGAR_COUNT
+        print(" 納得度N:{}".format(N))
 
         # if N * TRIGAR_COUNT >= 1.0: # 納得度が1.0になるまでリトライ
         if N  >= 1.0:
-            print("\n#################################\nDown S0 ! NOT RECONFILM !\n#################################")
             return True
         else:
             print("\n#################################\nDown S0 ! RECONFILM from here !\n#################################")
@@ -86,9 +101,15 @@ def main():                                 # 環境内でエージェントを�
 
     
     mod = model(epoch, env, agent)
-
-    if mod:
-        print("\n再確認 (リトライ) 終了しました.\n")
+    IGNITION_LIST, TOTALREWARD_LIST = mod.execute() # IGNITION_LIST, TOTALREWARD_LIST = model(env, agent)
+    
+    # 結果をグラフ化
+    RESULT = False
+    
+    RESULT = Illustration(IGNITION_LIST, TOTALREWARD_LIST)
+    
+    if RESULT:
+        print("結果を描写")
 
 
 
