@@ -92,7 +92,7 @@ class model():
 
 
             # 結果をグラフ化
-            
+
             Illustration(IGNITION_LIST, TOTALREWARD_LIST)
 
-            return True
+        return True

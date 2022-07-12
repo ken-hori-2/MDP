@@ -91,7 +91,7 @@ def main():                                 # 環境内でエージェントを�
 
         # やり直す回数? 納得度の分散度合い
         # 決断の納得しやすさ
-        N = 0.25 # 1
+        N = 1#0.25 # 1
 
         # 過程の保存の為の配列
         IGNITION_LIST = np.zeros(shape=10) # env.row_length)

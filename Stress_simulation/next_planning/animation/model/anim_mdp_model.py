@@ -10,7 +10,8 @@ class Anim():
     # def __init__(self, STATE_HISTORY):
     def __init__(self):
         # self.state_history = [0,1,2]
-        self.state_history = [[3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3]]
+        # self.state_history = [[3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3]]
+        self.state_history = [[3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3]]
         arr = np.array(self.state_history)
         self.state_history = arr.flatten()
         print("STATE_HISTORY:{}".format(self.state_history))
