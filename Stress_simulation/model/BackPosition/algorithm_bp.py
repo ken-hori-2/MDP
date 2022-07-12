@@ -1,5 +1,5 @@
 import numpy as np
-from graph_model import Illustration
+from graph_bp import Illustration
 
 
 class model():

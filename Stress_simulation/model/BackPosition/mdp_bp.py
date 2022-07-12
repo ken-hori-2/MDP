@@ -34,9 +34,9 @@ class Agent():                              # エージェントを定義
     def policy_stressfull(self, state):
         return (self.actions[1])            # DOWN
     
-    def neuron(self, total_stress, THRESHOLD):# w1 = 1, b = x1*w1
+    def neuron(self, total_stress, THRESHOLD):
 
-        if THRESHOLD > total_stress: # b:
+        if THRESHOLD > total_stress:
             print("\n#################################\nStressFree ! UP from here !\n#################################")
             return False
         else:
