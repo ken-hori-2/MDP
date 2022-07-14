@@ -9,18 +9,13 @@ sys.path.append("../")
 from statistics import mean, median,variance,stdev
 from algorithm_bp import model
 
-
 # mdp_next_planning_branch.py のアニメーションver, State《 [{}] 》 -> State[{}] (シンプル化)
-
 # mdp_branch_anim.py の整理ver.
-
 # mdp_re.py の整理ver.
-
 # mdp_re_2.py のmodelをclass化したver.
-
 # mdp_model.py の納得度Nの分散を計算させるver.
-
 # mdp_model_N.py のclassの2回呼び出しの修正ver.
+# mdp_Fix.py のback position ver. -> 納得度N = 分散から算出　から　0.25, 0.5, 1.0 と固定
 
 
 class Agent():                              # エージェントを定義
@@ -44,10 +39,10 @@ class Agent():                              # エージェントを定義
             return True
 
     def next_planning(self, N, TRIGAR_COUNT, agent, data):
-        N = agent.culculate(data, TRIGAR_COUNT)
+        # N = agent.culculate(data, TRIGAR_COUNT)
 
-        # if N * TRIGAR_COUNT >= 1.0: # 納得度が1.0になるまでリトライ
-        if N  >= 1.0:
+        if N * TRIGAR_COUNT >= 1.0: # 納得度が1.0になるまでリトライ
+        # if N  >= 1.0:
             print("\n#################################\nDown S0 ! NOT RECONFILM !\n#################################")
             return True
         else:
