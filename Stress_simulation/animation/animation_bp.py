@@ -11,7 +11,9 @@ class Anim():
     def __init__(self):
         # self.state_history = [0,1,2]
         # self.state_history = [[3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3], [2], [1], [0], [1], [2], [3]]
-        self.state_history = [[4], [3], [2], [1], [2], [3], [4], [3], [2], [1], [2], [3], [4], [3], [2], [1], [2], [3], [4], [3], [2], [1], [2], [3], [4]]
+        # self.state_history = [[4], [3], [2], [1], [2], [3], [4], [3], [2], [1], [2], [3], [4], [3], [2], [1], [2], [3], [4], [3], [2], [1], [2], [3], [4]]
+        self.state_history = [[4], [3], [2], [1], [2], [3], [4], [5]]
+
         arr = np.array(self.state_history)
         self.state_history = arr.flatten()
         print("STATE_HISTORY:{}".format(self.state_history))
@@ -45,16 +47,18 @@ class Anim():
 
     def view_plot_text(self):
         # 状態を示す文字S0～S8を描く
+        plt.text(0.2, -0.5, ':', size=10, ha='center')
         plt.text(0.2, 1.5, 'S0', size=10, ha='center')
         plt.text(0.2, 3.5, 'S1', size=10, ha='center')
         plt.text(0.2, 5.5, 'S2', size=10, ha='center')
         plt.text(0.2, 7.5, 'S3', size=10, ha='center')
         plt.text(0.2, 9.5, 'S4', size=10, ha='center')
         plt.text(0.8, 1.5, 'Branch', size=10, ha='center')
-        plt.plot([0.5, 0.5], [1.5, 9.5], color="black")
+        plt.plot([0.5, 0.5], [0.0, 9.5], color="black")
         # plt.plot([0.5], [1.5], marker="s", color='black', markersize=40)
         # plt.plot([0.5], [3.5], marker="s", color='black', markersize=40)
         # plt.plot([0.5], [5.5], marker="s", color='black', markersize=40)
+        plt.plot([0.5], [-0.5], marker="s", color='grey', markersize=40)
         plt.plot([0.5], [1.5], marker="s", color='grey', markersize=40)
         plt.plot([0.5], [3.5], marker="s", color='grey', markersize=40)
         plt.plot([0.5], [5.5], marker="s", color='grey', markersize=40)
@@ -64,7 +68,7 @@ class Anim():
 
         # 描画範囲の設定と目盛りを消す設定
         self.ax.set_xlim(0, 1)
-        self.ax.set_ylim(0.5, 10.5)
+        self.ax.set_ylim(-1.5, 10.5)
         plt.tick_params(axis='both', which='both', bottom='off', top='off',
                         labelbottom='off', right='off', left='off', labelleft='off')
         

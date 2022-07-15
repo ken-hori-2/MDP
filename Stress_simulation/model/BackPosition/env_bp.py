@@ -102,6 +102,12 @@ class Environment():
     def can_action_at(self, state):                     # 行動できる場所(状態)かどうかを判定する関数を定義
         if self.grid[state.row][state.column] == 0:
             return True
+        
+        # add 0715
+        elif self.grid[state.row][state.column] == 7:
+            return True
+
+
         else:
             return False
 
@@ -134,6 +140,10 @@ class Environment():
         if self.grid[next_state.row][next_state.column] == 9:
             next_state = state
 
+
+        # if self.grid[next_state.row][next_state.column] == 7:
+        #     next_state.row = (self.row_length - 1)              # add 0715
+
         return next_state
 
     def reward_func(self, state, TRIGAR):                       # 報酬関数を定義
@@ -154,6 +164,11 @@ class Environment():
             # Get damage! and the game ends.
             reward = 0 # +1
             done = True
+        elif attribute == 7:
+            print(f"\n##########\nBack to Exact location : {attribute}")
+            done = True
+            print("正しい場所まで戻ったので、納得度に関係なく終了します。")
+            
 
         return reward, done
 

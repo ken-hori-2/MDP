@@ -87,6 +87,15 @@ class model():
                 if COUNT > 100:
                     break
 
+            # add 0715
+            action = self.agent.policy_branch(state)
+            print(action)
+            next_state, reward, done = self.env.step(action, TRIGAR)
+            TOTAL_STRESS += reward
+            state = next_state
+            STATE_HISTORY.append(state)
+            TOTALREWARD_LIST[COUNT] = TOTAL_STRESS
+
             # print("\nEpisode {} : Agent gets {:.2f} stress.\n".format(COUNT, TOTAL_STRESS))
             print("state_history : {}".format(STATE_HISTORY))
 

@@ -28,6 +28,9 @@ class Agent():                              # エージェントを定義
     
     def policy_stressfull(self, state):
         return (self.actions[1])            # DOWN
+
+    def policy_branch(self, state):
+        return (self.actions[3])
     
     def neuron(self, total_stress, THRESHOLD):
 
@@ -73,7 +76,7 @@ def main():                                 # 環境内でエージェントを�
         [0],
         [0],
         [0],
-        [0], # start
+        [7], # start
         [-1]
     ]
     
