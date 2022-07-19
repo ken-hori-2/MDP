@@ -89,14 +89,14 @@ class model():
                     break
 
             # add 0715
-            action = self.agent.policy_branch(state)
-            print(action)
-            next_state, reward, done = self.env.step(action, TRIGAR)
-            TOTAL_STRESS += reward
-            state = next_state
-            STATE_HISTORY.append(state)
+            # action = self.agent.policy_branch(state)
+            # print(action)
+            # next_state, reward, done = self.env.step(action, TRIGAR)
+            # TOTAL_STRESS += reward
+            # state = next_state
+            # STATE_HISTORY.append(state)
             # 分岐
-            # STATE_HISTORY.append([-1])
+            STATE_HISTORY.append([-1])
             TOTALREWARD_LIST[COUNT] = TOTAL_STRESS
 
             # print("\nEpisode {} : Agent gets {:.2f} stress.\n".format(COUNT, TOTAL_STRESS))
