@@ -43,7 +43,7 @@ machine = GraphMachine(model=model, states=states, transitions=transitions, init
                        auto_transitions=False, ordered_transitions=False, title='',
                        show_auto_transitions=True)
 
-filename = '/Users/ken/Desktop/stress simulation/MDP/Stress_simulation/practice/statemachine/animation/mdp_fig_class_for/'
+filename = '/Users/ken/Desktop/stress simulation/MDP/Stress_simulation/practice/statemachine/animation/fig_main/'
 
 
 
@@ -107,7 +107,7 @@ class algorithm():
         self.save = False
         self.BPLIST = []
         # self.NODELIST = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.NODELIST = [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.NODELIST = [1, 1, 0, 0, 0, 0, 0]
         # print("stress:{}".format(self.s))
         self.A = False
         self.next_bp = 0
@@ -121,11 +121,11 @@ class algorithm():
                 self.BPLIST.append(i)
                 # 一個前が1ならpopで削除
                 print("削除前 {}".format(self.BPLIST))
-                # if i > 0:
+                
                 if self.NODELIST[i - 1] == 1: #  and i != 1:
                     self.BPLIST.pop(-2)
                     print("削除後 {}".format(self.BPLIST))
-                # self.BPLIST.append(i)
+                
                 print("storage  BPLIST:{}".format(self.BPLIST))
                 self.save = True
                 statemachine.save_BP(None)
@@ -139,8 +139,9 @@ class algorithm():
 
 
             i += 1
+            print("################")
             statemachine.UP(None)
-            # return done, i
+            
             if self.NODELIST[i] == 0:    
                 self.s += a
                 
@@ -172,6 +173,7 @@ class algorithm():
             a = True
             while a:
                 i -= 1
+                print("################")
                 if i == self.next_bp:
                     a = False
             statemachine.DOWN(None)
@@ -201,11 +203,12 @@ class algorithm():
 if __name__ == "__main__":
     done = False
     s = 0
-    stressfull = 5
+    stressfull = 3 # 5
     a = 1
+    # filename = '/Users/ken/Desktop/stress simulation/MDP/Stress_simulation/practice/statemachine/animation/fig_main/'
 
     algo = algorithm(s, stressfull)
-    # for i in range(20):
+    
     count = 0
     i = 0
     while not done:
@@ -231,7 +234,7 @@ if __name__ == "__main__":
         if ext == '.png':
             ims.append(imageio.imread(filename + name))
             
-    imageio.mimwrite('anim_mdp8.gif', ims, fps = 0.8)
+    imageio.mimwrite('anim_main_simple.gif', ims, fps = 0.8)
 
 
     print([event for event in machine.events])
